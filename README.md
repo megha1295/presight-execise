@@ -82,12 +82,12 @@ cd client
 npm run dev
 ```
 
-Client runs on `http://localhost:5173`
+Client runs on `http://localhost:3002`
 
 **5. Open the app**
 
 ```
-http://localhost:5173
+http://localhost:3002
 ```
 
 ---
