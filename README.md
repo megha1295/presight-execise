@@ -1,161 +1,251 @@
 # Presight User Directory
 
-A full-stack user directory application built using React, TypeScript, Node.js, Express, SQLite, TanStack Query, and React Window.
+A full-stack user directory application with search, filtering, sorting, and infinite scroll.
 
-## Features
+Built with React, Node.js, SQLite, and Docker.
 
-- Search users by first name and last name
-- Sort users by:
-  - First Name
-  - Last Name
-  - Age
-  - Nationality
-- Filter users by nationality
-- Filter users by hobbies
-- Top 20 nationality filters with counts
-- Top 20 hobby filters with counts
-- Infinite scrolling
-- Virtualized list rendering using React Window
-- URL-synchronized search, sorting, and filters
-- Responsive UI for desktop and mobile devices
+---
 
 ## Tech Stack
 
-### Frontend
-
-- React
-- TypeScript
+**Frontend**
+- React 19 with TypeScript
 - Vite
-- Tailwind CSS
-- TanStack Query
-- Axios
-- React Window
+- Tailwind CSS 4
+- React Router 7
+- TanStack Query (infinite scroll and caching)
+- react-window (virtualization)
 
-### Backend
+**Backend**
+- Node.js with Express 5
+- better-sqlite3 (SQLite)
+- CommonJS modules
 
-- Node.js
-- Express
-- SQLite
-- better-sqlite3
-- Faker.js
-
----
-
-## Local Setup
-
-### Install Dependencies
-
-From the project root:
-
-```bash
-yarn install
-```
-
-### Seed the Database
-
-Run the database seed script:
-
-```bash
-yarn workspace presight-server seed
-```
-
-This will:
-
-- Create the SQLite database
-- Seed users
-- Seed hobbies
-- Create user-hobby relationships
-
-### Run the Backend
-
-```bash
-yarn workspace presight-server start
-```
-
-Backend runs on:
-
-```txt
-http://localhost:5000
-```
-
-### Run the Frontend
-
-Open another terminal:
-
-```bash
-yarn workspace presight-client dev
-```
-
-Frontend runs on:
-
-```txt
-http://localhost:3000
-```
+**Infrastructure**
+- Docker and Docker Compose
+- nginx (serves frontend and proxies API)
 
 ---
 
-## API
+## Features
 
-### Get Users
+- Search users by first name, last name, or full name
+- Filter by nationality (OR logic - matches any selected)
+- Filter by hobbies (AND logic - must have all selected)
+- Sort by first name, last name, age, or nationality
+- Virtualized infinite scroll list
+- URL-synced filters (reload or share URL restores state)
+- Responsive layout with mobile filter drawer
+- Loading, empty, and error states
 
-```http
-GET /api/users
+---
+
+## Running Locally
+
+### Prerequisites
+
+- Node.js 20+
+- npm
+
+### Setup
+
+**1. Install dependencies**
+
+```bash
+npm install
 ```
 
-### Query Parameters
+**2. Seed the database**
 
-| Parameter | Description |
-|------------|-------------|
-| search | Search by first name or last name |
-| page | Page number |
-| limit | Number of records per page |
-| sortBy | first_name, last_name, age, nationality |
-| sortDir | asc, desc |
-| nationalities | Comma-separated list of nationalities |
-| hobbies | Comma-separated list of hobbies |
+```bash
+cd server
+node src/database/seed.js
+```
 
-### Example
+This creates `server/users.db` with 1000 seeded users.
 
-```http
-GET /api/users?search=john&page=1&limit=20&sortBy=age&sortDir=desc
+**3. Start the server**
+
+```bash
+cd server
+node src/index.js
+```
+
+Server runs on `http://localhost:3001`
+
+**4. Start the client**
+
+Open a new terminal:
+
+```bash
+cd client
+npm run dev
+```
+
+Client runs on `http://localhost:5173`
+
+**5. Open the app**
+
+```
+http://localhost:5173
 ```
 
 ---
 
 ## Running with Docker Compose
 
-Build and start all services:
+### Prerequisites
+
+- Docker Desktop installed and running
+
+### Setup
+
+**1. Build and start**
 
 ```bash
-docker compose up --build
+docker-compose up --build
 ```
 
-If database seeding is not automated:
+This will:
+- Build the server and client Docker images
+- Start both containers
+- Seed the database automatically on first run
+- Serve the app at `http://localhost:3000`
 
-```bash
-docker compose exec server yarn seed
+**2. Open the app**
+
 ```
-
-## Application URLs
-
-Frontend:
-
-```txt
 http://localhost:3000
 ```
 
-Backend:
+**3. Stop**
 
-```txt
-http://localhost:5000
+```bash
+docker-compose down
+```
+
+### Subsequent runs
+
+After the first build, start without rebuilding:
+
+```bash
+docker-compose up
+```
+
+Rebuild only when code changes:
+
+```bash
+docker-compose up --build
 ```
 
 ---
 
-## Implementation Notes
+## API Endpoints
 
-- Server-side filtering, sorting, and pagination
-- Infinite scrolling implemented using TanStack Query's `useInfiniteQuery`
-- Virtualized rendering using React Window for improved performance
-- URL query parameters preserve search, sorting, and filter state
-- Responsive layout optimized for desktop and mobile devices
+### GET /api/users
+
+Returns paginated users with filters applied.
+
+**Query Parameters**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| search | string | Search by first name, last name, or full name |
+| nationalities | string | Comma separated list. OR logic. |
+| hobbies | string | Comma separated list. AND logic. |
+| sortBy | string | first_name, last_name, age, nationality |
+| sortDir | string | asc or desc |
+| page | number | Page number. Default 1. |
+| limit | number | Results per page. Default 20. |
+
+**Example**
+
+```
+GET /api/users?search=john&nationalities=British,Indian&sortBy=age&sortDir=desc&page=1
+```
+
+**Response**
+
+```json
+{
+  "users": [
+    {
+      "id": 1,
+      "avatar": "https://...",
+      "first_name": "John",
+      "last_name": "Smith",
+      "age": 25,
+      "nationality": "British",
+      "hobbies": ["Reading", "Coding"]
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 145,
+    "hasMore": true
+  },
+  "filters": {
+    "nationalities": [
+      { "value": "British", "count": 45 }
+    ],
+    "hobbies": [
+      { "value": "Reading", "count": 89 }
+    ]
+  }
+}
+```
+
+---
+
+## Project Structure
+
+```
+presight-exercise/
+  client/                   React frontend
+    src/
+      api/                  API call functions
+      components/           UI components
+      hooks/                Custom hooks
+      pages/                Page components
+      types/                TypeScript types
+    .env.production         Production API URL
+    vite.config.ts
+
+  server/                   Node.js backend
+    src/
+      database/
+        db.js               SQLite connection and table setup
+        seed.js             Seed 1000 users with faker
+      routes/
+        users.js            All API endpoints
+      index.js              Express server entry point
+
+  Dockerfile.client         Builds and serves React app with nginx
+  Dockerfile.server         Builds Node.js server
+  docker-compose.yml        Runs both services together
+  nginx.conf                nginx reverse proxy configuration
+```
+
+---
+
+## Data Model
+
+Three tables in SQLite:
+
+```
+users         - user records
+hobbies       - master list of 25 hobbies
+user_hobbies  - links users to their hobbies (many-to-many)
+```
+
+Each user has 0 to 10 randomly assigned hobbies from the master list.
+
+---
+
+## Notes
+
+- Database seeds automatically on first Docker run
+- Subsequent runs skip seeding if data already exists
+- Database is persisted in a Docker named volume
+- All filter state is synced to URL query parameters
