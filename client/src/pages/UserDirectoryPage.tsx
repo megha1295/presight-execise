@@ -195,18 +195,6 @@ function UserDirectoryPage() {
                 className="absolute bottom-0 left-0 right-0 flex flex-col rounded-t-2xl border-t border-slate-700 bg-slate-900"
                 style={{ height: "100vh" }}
               >
-                {/* fixed header */}
-                <div className="flex shrink-0 items-center justify-between border-b border-slate-700 px-4 py-3">
-                  <h2 className="text-base font-semibold text-slate-100">
-                    Filters
-                  </h2>
-                  <button
-                    onClick={() => setIsFilterDrawerOpen(false)}
-                    className="text-2xl leading-none text-slate-400 hover:text-slate-100"
-                  >
-                    ×
-                  </button>
-                </div>
 
                 {/* scrollable middle */}
                 <div className="flex-1 overflow-y-auto px-4 py-4">
