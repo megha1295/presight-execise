@@ -263,7 +263,7 @@ function UserDirectoryPage() {
                 {hasSelectedFilters && (
                   <button
                     onClick={clearAllFilters}
-                    className="text-sm text-slate-400 hover:text-slate-200"
+                    className="text-sm text-slate-400 hover:text-slate-200 cursor-pointer"
                   >
                     Clear all
                   </button>
@@ -297,7 +297,7 @@ function UserDirectoryPage() {
                   <button
                     type="button"
                     onClick={clearAllFilters}
-                    className="hidden text-sm text-slate-400 hover:text-slate-200 lg:block"
+                    className="hidden text-sm text-slate-400 hover:text-slate-200 lg:block cursor-pointer"
                   >
                     Clear all
                   </button>
