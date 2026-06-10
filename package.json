@@ -4,13 +4,11 @@
   "repository": "",
   "author": "",
   "license": "MIT",
+   "private": true,
   "workspaces": [
     "client",
     "server"
   ],
-  "scripts": {
-    "start": "lerna run start"
-  },
   "devDependencies": {
     "lerna": "~8.2.1"
   }

@@ -4,8 +4,15 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@faker-js/faker": "^10.4.0",
+    "better-sqlite3": "^12.10.0",
+    "cors": "^2.8.6",
     "express": "~5.1.0"
   },
+  "scripts": {
+  "start": "node src/index.js",
+  "seed": "node src/database/seed.js"
+},
   "devDependencies": {
     "@types/express": "~5.0.1",
     "@types/node-fetch": "~2.6.12"

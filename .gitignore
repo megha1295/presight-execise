@@ -28,4 +28,9 @@ yarn-debug.log*
 yarn-error.log*
 
 .parcel-cache
-.idea/
+.idea/server/users.db
+server/users.db-shm
+server/users.db-wal
+node_modules
+*/node_modules
+client/dist
